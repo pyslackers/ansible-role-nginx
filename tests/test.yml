@@ -1,6 +1,6 @@
 ---
-- hosts: "{{ hosts_group | default('all') }}"
+- hosts: localhost
   vars_files:
-    - "example-vars.yml"
+    - example-vars.yml
   roles:
-    - "{{ role_name | default('nginx') }}"
+    - ansible-role-nginx
