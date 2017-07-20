@@ -1,7 +1,9 @@
 NGINX
 =========
 
-Role for NGINX, with support for automatic SSL certificate provisioning from Let's Encrypt
+[![Build Status](https://travis-ci.org/pyslackers/ansible-role-nginx.svg?branch=master)](https://travis-ci.org/pyslackers/ansible-role-nginx)
+
+Role for NGINX that assumes serving a long running server process, with support for automatic SSL certificate provisioning and renewal from Let's Encrypt.
 
 Requirements
 ------------
@@ -11,28 +13,58 @@ None
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+The role takes a dictionary of variables:
+
+```yaml
+sites:  # dict of sites to provision
+  sirbot:
+    # list of domains for this site to respond do, include `www.` and non-`www.`
+    # to ensure all are handled, required
+    domains:
+      - sirbot.pyslackers.com
+    port: 5000  # local port the application will listen on, required
+    # Whether or not to provision SSL, default: false.
+    # note: for this to work, your server must be accessible to the interweb
+    ssl: false  # whether or not to provision SSL, 
+    static: ''  # optional static directory to serve as well
+    email: noreply@example.com  # who should be emailed on cert expiration, if our auto-renewal fails. Required if ssl: true
+```
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- hosts: servers
+  roles:
+    - role: pyslackers.nginx
+      sites:
+        pyslackers:
+          domains:
+            - www.pyslackers.com
+            - pyslackers.com
+          port: 8000
+          ssl: true
+          static: /var/www/pyslackers/static/
+          email: pythondev.slack@gmail.com
+        sirbot:
+          domains:
+            - sirbot.pyslackers.com
+          port: 8080
+          ssl: true
+          email: pythondev.slack@gmail.com
+```
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+None
