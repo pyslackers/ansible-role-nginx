@@ -1,0 +1,15 @@
+---
+- name: "make {{ item.key }} available"
+  template:
+    src: etc/nginx/sites-available/site-available.j2
+    dest: "/etc/nginx/sites-available/{{ item.key }}"
+  with_dict: "{{ sites }}"
+
+- name: "enable {{ item.key }}"
+  file:
+    src: "/etc/nginx/sites-available/{{ item.key }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.key }}"
+    state: link
+  with_dict: "{{ sites }}"
+  notify:
+    - reload nginx

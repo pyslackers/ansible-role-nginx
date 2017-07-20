@@ -1,0 +1,19 @@
+---
+- name: install nginx
+  apt:
+    name: nginx
+    state: latest
+  notify:
+    - start nginx
+
+# - name: enable nginx in ufw
+#   ufw:
+#     rule: allow
+#     name: 'Nginx Full'
+#   notify:
+#     - enable ufw
+
+- include: ssl.yml
+  when: "ssl | default(false)"
+
+- include: http.yml

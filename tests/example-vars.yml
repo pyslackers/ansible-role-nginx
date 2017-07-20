@@ -1,0 +1,9 @@
+---
+sites:
+  sirbot:
+    domains:
+      - sirbot.pyslackers.com
+    port: 5000
+    ssl: false
+    static: ''
+    email: noreply@example.com

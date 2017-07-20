@@ -1,0 +1,38 @@
+---
+- name: add certbot ppa
+  apt_repository:
+    repo: ppa:certbot/certbot
+  # Debian9+ has certbot in the official PPAs
+  when: ansible_distribution == 'Ubuntu'
+
+- name: install certbot
+  apt:
+    name: certbot
+    state: latest
+
+- name: "check if ssl certs for {{ item.key }} are already generated"
+  stat:
+    path: "/etc/letsencrypt/live/{{ item.key }}/fullchain.pem"
+  register: fullchain
+  with_dict: "{{ sites }}"
+
+- name: "stop nginx"
+  service:
+    name: nginx
+    state: stopped
+  when: not fullchain.stat.exists
+
+- name: "generate ssl certificates for {{ item.key }}"
+  command: "certbot certonly --standalone --email {{ item.value.email }}
+            --agree-tos -n -d {{ item.value.domains | join(',') }}{% if item.value.staging | default(false) %} --staging{% endif %}"
+  when: not fullchain.stat.exists
+
+- name: create cron job to autorenew all ssl certificates
+  cron:
+    name: auto renew the ssl certificates
+    minute: 1
+    hour: 23
+    weekdy: 0
+    job: '/usr/bin/certbot renew --quiet
+          --pre-hook "systemctl stop nginx.service"
+          --post-hook "systemctl start nginx.service"'
