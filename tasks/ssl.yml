@@ -14,13 +14,14 @@
   stat:
     path: "/etc/letsencrypt/live/{{ item.key }}/fullchain.pem"
   register: fullchain
-  with_dict: "{{ sites }}"
 
 - name: "stop nginx"
   service:
     name: nginx
     state: stopped
   when: not fullchain.stat.exists
+  notify:
+    - restart nginx
 
 - name: "generate ssl certificates"
   command: "certbot certonly --standalone --email {{ item.value.email }}
@@ -32,7 +33,8 @@
     name: auto renew the ssl certificates
     minute: 1
     hour: 23
-    weekdy: 0
+    weekday: 0
+    # This isn't ideal since it will block request handling during renews.
     job: '/usr/bin/certbot renew --quiet
           --pre-hook "systemctl stop nginx.service"
           --post-hook "systemctl start nginx.service"'
