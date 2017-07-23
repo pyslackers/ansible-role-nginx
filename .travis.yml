@@ -30,6 +30,7 @@ script:
   - cat /etc/nginx/sites-enabled/sirbot
   - grep 'server_name sirbot.pyslackers.com;' /etc/nginx/sites-enabled/sirbot
   - sudo nginx -t
+  - curl localhost
 
 after_script:
   - ls -l /etc/nginx
