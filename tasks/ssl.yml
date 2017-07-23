@@ -10,7 +10,7 @@
     name: certbot
     state: latest
 
-- name: "check if ssl certs for {{ item.key }} are already generated"
+- name: "check if ssl certs are already generated"
   stat:
     path: "/etc/letsencrypt/live/{{ item.key }}/fullchain.pem"
   register: fullchain
@@ -22,7 +22,7 @@
     state: stopped
   when: not fullchain.stat.exists
 
-- name: "generate ssl certificates for {{ item.key }}"
+- name: "generate ssl certificates"
   command: "certbot certonly --standalone --email {{ item.value.email }}
             --agree-tos -n -d {{ item.value.domains | join(',') }}{% if item.value.staging | default(false) %} --staging{% endif %}"
   when: not fullchain.stat.exists

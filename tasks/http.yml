@@ -1,11 +1,11 @@
 ---
-- name: "make {{ item.key }} available"
+- name: "make site available"
   template:
     src: etc/nginx/sites-available/site-available.j2
     dest: "/etc/nginx/sites-available/{{ item.key }}"
   with_dict: "{{ sites }}"
 
-- name: "enable {{ item.key }}"
+- name: "enable site"
   file:
     src: "/etc/nginx/sites-available/{{ item.key }}"
     dest: "/etc/nginx/sites-enabled/{{ item.key }}"
