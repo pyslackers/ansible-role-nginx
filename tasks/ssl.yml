@@ -12,7 +12,7 @@
 
 - name: "check if ssl certs are already generated"
   stat:
-    path: "/etc/letsencrypt/live/{{ item.key }}/fullchain.pem"
+    path: "/etc/letsencrypt/live/{{ item.value.domains[0] }}/fullchain.pem"
   register: fullchain
 
 - name: "stop nginx"
