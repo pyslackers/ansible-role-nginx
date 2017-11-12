@@ -3,68 +3,63 @@ NGINX
 
 [![Build Status](https://travis-ci.org/pyslackers/ansible-role-nginx.svg?branch=master)](https://travis-ci.org/pyslackers/ansible-role-nginx)
 
-Role for NGINX that assumes serving a long running server process, with support for automatic SSL certificate provisioning and renewal from Let's Encrypt.
-
-Requirements
-------------
-
-None
+Ansible role to install and configure NGINX.
 
 Role Variables
 --------------
 
 The role takes a dictionary of variables:
 
-```yaml
-sites:  # dict of sites to provision
-  sirbot:
-    # list of domains for this site to respond do, include `www.` and non-`www.`
-    # to ensure all are handled, required
-    domains:
-      - sirbot.pyslackers.com
-    port: 5000  # local port the application will listen on, required
-    # Whether or not to provision SSL, default: false.
-    # note: for this to work, your server must be accessible to the interweb
-    ssl: false  # whether or not to provision SSL, 
-    static: ''  # optional static directory to serve as well
-    email: noreply@example.com  # who should be emailed on cert expiration, if our auto-renewal fails. Required if ssl: true
-```
+* `nginx_sites`: Dict of sites.
+    * `domains`: List of domains serving this site.
+    * `letsencrypt`: Use HTTPS and generate letsencrypt certificate for `domains` (use `staging` for the staging letsencrypt).
+    * `locations`: Dict of custom nginx locations block.
+        * `location`: Location match.
+        * `static`: Configure location as static and use this folder.
+        * `websocket`: Configure location for websocket.
+        * `proxy_pass`: Proxy destination.
+        * `custom`: Custom configuration for location.
+        
+* `certbot_port`: Listening port for certbot during certificates renewal (default to `32456`).
 
 Dependencies
 ------------
 
-None
+* `pyslackers.letsencrypt`: Letsencrypt certificate generation.
+
 
 Example Playbook
 ----------------
 
 ```yaml
-- hosts: servers
+- hosts: localhost
+  vars:
+    email: noreply@example.com
+    nginx_sites:
+      sirbot:
+        domains:
+          - sirbot.pyslackers.com
+        locations:
+          websock:
+            location: /websocket
+            websocket: true
+            proxy_pass: http://127.0.0.1:5000
+          custom:
+            location: /custom
+            custom: |
+              proxy_set_header X-Hello-World hello;
+            proxy_pass: http://127.0.0.1:5001
+          static:
+            location: /static
+            static: /var/www/my_app/static/
+          root:
+            location: /
+            proxy_pass: http://127.0.0.1:5000
   roles:
-    - role: pyslackers.nginx
-      sites:
-        pyslackers:
-          domains:
-            - www.pyslackers.com
-            - pyslackers.com
-          port: 8000
-          ssl: true
-          static: /var/www/pyslackers/static/
-          email: pythondev.slack@gmail.com
-        sirbot:
-          domains:
-            - sirbot.pyslackers.com
-          port: 8080
-          ssl: true
-          email: pythondev.slack@gmail.com
+    - pyslackers.nginx
 ```
 
 License
 -------
 
 MIT
-
-Author Information
-------------------
-
-None

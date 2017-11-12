@@ -1,9 +1,21 @@
 ---
-sites:
+email: noreply@example.com
+nginx_sites:
   sirbot:
     domains:
       - sirbot.pyslackers.com
-    port: 5000
-    ssl: false
-    static: ''
-    email: noreply@example.com
+    locations:
+      websock:
+        location: /websocket
+        websocket: true
+      custom:
+        location: /custom
+        custom: |
+          proxy_set_header X-Hello-World hello;
+        proxy_pass: http://127.0.0.1:5001
+      static:
+        location: /static
+        static: /var/www/my_app/static/
+      root:
+        location: /
+        proxy_pass: http://127.0.0.1:5000

@@ -1,20 +1,35 @@
 ---
-- name: install nginx
+
+- name: Install nginx
   apt:
     name: nginx
     state: latest
   notify:
-    - start nginx
+    - Restart nginx
 
-# - name: enable nginx in ufw
-#   ufw:
-#     rule: allow
-#     name: 'Nginx Full'
-#   notify:
-#     - enable ufw
+- name: Generate certificates
+  include_role:
+    name: letsencrypt
+  vars:
+    domains: "{{ item.value.domains }}"
+    letsencrypt: "{{ item.value.letsencrypt }}"
+    webserver: nginx
+  with_dict: "{{ nginx_sites }}"
+  when: item.value.letsencrypt is defined and item.value.letsencrypt
 
-- include: ssl.yml
-  with_dict: "{{ sites }}"
-  when: item.value.ssl
+- include_tasks: sites.yml
+  with_dict: "{{ nginx_sites }}"
 
-- include: http.yml
+- name: Disable default
+  file:
+    dest: /etc/nginx/sites-enabled/default
+    state: absent
+  when: nginx_sites
+  notify:
+    - Reload nginx
+
+- name: Enable nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
