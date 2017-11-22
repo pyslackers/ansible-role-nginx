@@ -1,5 +1,11 @@
 ---
 
+- name: Add ppa
+  apt_repository:
+    repo: "ppa:nginx/stable"
+    update_cache: yes
+  when: ansible_distribution_release in ('precise' 'trusty')
+
 - name: Install nginx
   apt:
     name: nginx
