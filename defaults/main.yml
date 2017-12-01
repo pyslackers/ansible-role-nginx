@@ -1,3 +1,4 @@
 ---
 
+nginx_sites: {}
 certbot_port: 32456

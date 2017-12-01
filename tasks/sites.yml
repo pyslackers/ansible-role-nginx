@@ -3,6 +3,8 @@
   template:
     src: etc/nginx/sites-available/site-available.j2
     dest: "/etc/nginx/sites-available/{{ item.key }}"
+  notify:
+    - Reload nginx
 
 - name: "Enable {{ item.key }}"
   file:

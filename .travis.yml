@@ -1,39 +1,36 @@
 ---
-language: python
+services: docker
 
-python: "3.6"
-
-matrix:
-  fast_finish: true
-
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq python-apt 
+env:
+  - distro=debian8
+  - distro=debian9
+  - distro=ubuntu1604
 
 install:
-  - pip install ansible ansible-lint
-  - pip --version
-  - python --version
-  - ansible --version
+  - export container_id=$(date +%s)
+  - idempotence=$(mktemp)
   - "printf '[defaults]\nroles_path = ../' > ansible.cfg"
 
-script:
-  - ansible-lint tasks/main.yml
-  - ansible-playbook -i tests/inventory --syntax-check --list-tasks tests/test.yml
-  - ansible-playbook -i tests/inventory --connection=local --become -vvvv tests/test.yml -u root
-  - >
-      ansible-playbook -i tests/inventory --connection=local --become -vvvv tests/test.yml -u root
-      | grep -q 'changed=0.*failed=0'
-      && (echo 'Idempotence test: pass' && exit 0)
-      || (echo 'Idempotence test: fail' && exit 1)
-  - cat /etc/nginx/nginx.conf
-  - cat /etc/nginx/sites-enabled/sirbot
-  - grep 'server_name sirbot.pyslackers.com;' /etc/nginx/sites-enabled/sirbot
-  - sudo nginx -t
-  - curl localhost
+  # Build and run docker container
+  - docker pull geerlingguy/docker-$distro-ansible:latest
+  - docker run --detach --volume="$(dirname "$TRAVIS_BUILD_DIR")":/etc/ansible/roles:rw --name $container_id --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro geerlingguy/docker-$distro-ansible:latest /lib/systemd/systemd
+  - docker exec --tty ${container_id} env TERM=xterm apt-get update -qq
+  - docker ps
 
-after_script:
-  - ls -l /etc/nginx
-  - ls -l /etc/nginx/*
-# notifications:
-#   webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  - docker exec --tty ${container_id} env TERM=xterm ls -la /etc/ansible/roles
+  # Install requirements
+  - docker exec --tty ${container_id} env TERM=xterm apt-get install -y curl
+
+script:
+  # Run playbook.
+  - docker exec --tty $container_id env TERM=xterm ansible-playbook /etc/ansible/roles/ansible-role-nginx/tests/test.yml --syntax-check
+  - docker exec $container_id env TERM=xterm env ANSIBLE_FORCE_COLOR=1 ansible-playbook /etc/ansible/roles/ansible-role-nginx/tests/test.yml -vvv
+  - docker exec $container_id ansible-playbook /etc/ansible/roles/ansible-role-nginx/tests/test.yml | tee -a $idempotence
+  - tail $idempotence | grep -q 'changed=0.*failed=0' && (printf 'Idempotence test pass') || (printf 'Idempotence test fail' && exit 1)
+
+  # Tests
+  - docker exec --tty ${container_id} env TERM=xterm nginx -t
+  - docker exec --tty ${container_id} env TERM=xterm curl localhost -v
+  - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/sites-enabled/sirbot | grep 'server_name sirbot.pyslackers.com;'
+  - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/nginx.conf
+  - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/sites-enabled/sirbot
