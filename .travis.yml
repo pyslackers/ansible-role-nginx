@@ -31,3 +31,4 @@ script:
   - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/sites-enabled/sirbot | grep 'server_name sirbot.pyslackers.com;'
   - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/nginx.conf
   - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/sites-enabled/sirbot
+  - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/sites-enabled/pyslackers | grep 'return 301 https://pyslackers.com/traviscitest'

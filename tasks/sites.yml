@@ -1,7 +1,7 @@
 ---
 - name: "Make {{ item.key }} available"
   template:
-    src: etc/nginx/sites-available/site-available.j2
+    src: "{{ item.value.template | default('etc/nginx/sites-available/site-available.j2') }}"
     dest: "/etc/nginx/sites-available/{{ item.key }}"
   notify:
     - Reload nginx
