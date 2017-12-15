@@ -12,6 +12,7 @@ The role takes a dictionary of variables:
 
 * `nginx_sites`: Dict of sites.
     * `domains`: List of domains serving this site.
+    * `template`: Jinja2 template used to generate site configuration (default to `etc/nginx/sites-available/site-available.j2`).
     * `letsencrypt`: Use HTTPS and generate letsencrypt certificate for `domains` (use `staging` for the staging letsencrypt).
     * `locations`: Dict of custom nginx locations block.
         * `location`: Location match.
@@ -55,6 +56,10 @@ Example Playbook
           root:
             location: /
             proxy_pass: http://127.0.0.1:5000
+      pyslackers:
+        domains:
+          - pyslackers.com
+        template: pyslackers.j2
   roles:
     - pyslackers.nginx
 ```
