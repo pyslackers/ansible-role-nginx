@@ -1,4 +1,4 @@
 ---
-
-nginx_sites: {}
 certbot_port: 32456
+nginx_sites: {}
+ufw_enabled: True

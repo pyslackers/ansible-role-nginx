@@ -40,3 +40,9 @@
     name: nginx
     state: started
     enabled: yes
+
+- name: Enable UFW rule
+  ufw:
+    rule: allow
+    name: 'Nginx Full'
+  when: ufw_enabled
