@@ -16,7 +16,7 @@
 
 - name: Generate certificates
   include_role:
-    name: letsencrypt
+    name: pyslackers.letsencrypt
   vars:
     domains: "{{ item.value.domains }}"
     letsencrypt: "{{ item.value.letsencrypt }}"
