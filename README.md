@@ -14,7 +14,7 @@ The role takes a dictionary of variables:
     * `domains`: List of domains serving this site.
     * `template`: Jinja2 template used to generate site configuration (default to `etc/nginx/sites-available/site-available.j2`).
     * `letsencrypt`: Use HTTPS and generate letsencrypt certificate for `domains` (use `staging` for the staging letsencrypt).
-    * `locations`: Dict of custom nginx locations block.
+    * `locations`: List of custom nginx locations block.
         * `location`: Location match.
         * `static`: Configure location as static and use this folder.
         * `websocket`: Configure location for websocket.
@@ -41,20 +41,16 @@ Example Playbook
         domains:
           - sirbot.pyslackers.com
         locations:
-          websock:
-            location: /websocket
+          - location: /websocket
             websocket: true
             proxy_pass: http://127.0.0.1:5000
-          custom:
-            location: /custom
+          - location: /custom
             custom: |
               proxy_set_header X-Hello-World hello;
             proxy_pass: http://127.0.0.1:5001
-          static:
-            location: /static
+          - location: /static
             static: /var/www/my_app/static/
-          root:
-            location: /
+          - location: /
             proxy_pass: http://127.0.0.1:5000
       pyslackers:
         domains:

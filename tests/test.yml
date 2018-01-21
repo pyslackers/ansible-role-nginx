@@ -7,19 +7,16 @@
         domains:
           - sirbot.pyslackers.com
         locations:
-          websocket:
-            location: /websocket
+          - location: /websocket
             websocket: true
-          custom:
-            location: /custom
+            proxy_pass: http://127.0.0.1:5000
+          - location: /custom
             custom: |
               proxy_set_header X-Hello-World hello;
             proxy_pass: http://127.0.0.1:5001
-          static:
-            location: /static
+          - location: /static
             static: /var/www/my_app/static/
-          root:
-            location: /
+          - location: /
             proxy_pass: http://127.0.0.1:5000
       pyslackers:
         domains:
