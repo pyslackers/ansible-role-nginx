@@ -29,7 +29,12 @@ script:
   - docker exec --tty ${container_id} env TERM=xterm apt-get install -y curl
   - docker exec --tty ${container_id} env TERM=xterm nginx -t
   - docker exec --tty ${container_id} env TERM=xterm curl localhost -v
-  - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/sites-enabled/sirbot | grep 'server_name sirbot.pyslackers.com;'
-  - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/nginx.conf
+  # check sirbot config
+  - docker exec --tty ${container_id} env TERM=xterm sh -c "grep 'server_name sirbot.pyslackers.com;' /etc/nginx/sites-enabled/sirbot"
   - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/sites-enabled/sirbot
-  - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/sites-enabled/pyslackers | grep 'return 301 https://pyslackers.com/traviscitest'
+  # check default nginx config
+  - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/nginx.conf
+  # check pyslackers config
+  - docker exec --tty ${container_id} env TERM=xterm sh -c "grep 'return 301 https://pyslackers.com/traviscitest' /etc/nginx/sites-enabled/pyslackers"
+  # check gzip flag is toggle-able
+  - docker exec --tty ${container_id} env TERM=xterm sh -c "if [ -z \"$(grep 'gzip on' /etc/nginx/sites-enabled/nongzipped_site)\" ]; then true; else false; fi"

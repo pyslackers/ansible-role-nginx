@@ -20,7 +20,8 @@ The role takes a dictionary of variables:
         * `websocket`: Configure location for websocket.
         * `proxy_pass`: Proxy destination.
         * `custom`: Custom configuration for location.
-        
+    * `gzip_enabled`: Whether or not to enable GZIP support (default: `true`)
+
 * `certbot_port`: Listening port for certbot during certificates renewal (default to `32456`).
 
 Dependencies
