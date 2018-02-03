@@ -38,3 +38,5 @@ script:
   - docker exec --tty ${container_id} env TERM=xterm sh -c "grep 'return 301 https://pyslackers.com/traviscitest' /etc/nginx/sites-enabled/pyslackers"
   # check gzip flag is toggle-able
   - docker exec --tty ${container_id} env TERM=xterm sh -c "if [ -z \"$(grep 'gzip on' /etc/nginx/sites-enabled/nongzipped_site)\" ]; then true; else false; fi"
+
+  - docker exec --tty ${container_id} env TERM=xterm curl localhost -v -H 'Host: basicauth.local'
