@@ -24,7 +24,7 @@
         template: pyslackers.j2
       nongzipped_site:
         domains:
-          - example.local
+          - nongzip.local
         locations:
           - location: /
             proxy_pass: http://127.0.0.1:8000
@@ -37,6 +37,6 @@
             proxy_pass: http://127.0.0.1:8000
     nginx_auth:
       basicauthsite:
-        - {name: foo, password: bar, state: present}
+        - {name: foo, password: bar}
   roles:
     - ansible-role-nginx
