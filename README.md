@@ -22,6 +22,12 @@ The role takes a dictionary of variables:
         * `custom`: Custom configuration for location.
     * `gzip_enabled`: Whether or not to enable GZIP support (default: `true`)
 
+* `nginx_auth`: Dict of sites where to enable basic-auth.
+    * `site`: List of users for basic auth.
+        * `user`: User
+        * `password`: Password
+        * `state`: State (default to `present`).
+
 * `certbot_port`: Listening port for certbot during certificates renewal (default to `32456`).
 
 Dependencies
@@ -57,6 +63,9 @@ Example Playbook
         domains:
           - pyslackers.com
         template: pyslackers.j2
+  nginx_auth:
+      pyslackers:
+        - {name: foo, password: bar}
   roles:
     - pyslackers.nginx
 ```
