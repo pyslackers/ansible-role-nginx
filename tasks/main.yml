@@ -7,12 +7,31 @@
     update_cache: yes
   when: ansible_distribution == 'Ubuntu'
 
-- name: Install nginx
+- name: Install
   apt:
-    name: nginx
+    name: "{{ item }}"
     state: latest
+  with_items:
+    - nginx
   notify:
     - Restart nginx
+
+- name: Install passlib python2
+  apt:
+    name: python-passlib
+    state: latest
+  when: ansible_python_version[0] == "2"
+
+- name: Install passlib python3
+  apt:
+    name: python3-passlib
+    state: latest
+  when: ansible_python_version[0] == "3"
+
+- name: Auth directory
+  file:
+    path: /etc/nginx/auth
+    state: directory
 
 - name: Generate certificates
   include_role:
@@ -26,6 +45,8 @@
 
 - include_tasks: sites.yml
   with_dict: "{{ nginx_sites }}"
+  loop_control:
+    loop_var: nginx_site
 
 - name: Disable default
   file:

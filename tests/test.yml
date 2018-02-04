@@ -1,11 +1,11 @@
 ---
 - hosts: localhost
   vars:
-    email: noreply@example.com
+    email: noreply@example.local
     nginx_sites:
       sirbot:
         domains:
-          - sirbot.pyslackers.com
+          - sirbot.pyslackers.local
         locations:
           - location: /websocket
             websocket: true
@@ -20,14 +20,23 @@
             proxy_pass: http://127.0.0.1:5000
       pyslackers:
         domains:
-          - pyslackers.com
+          - pyslackers.local
         template: pyslackers.j2
       nongzipped_site:
         domains:
-          - example.com
+          - nongzip.local
         locations:
           - location: /
             proxy_pass: http://127.0.0.1:8000
         gzip_enabled: false
+      basicauthsite:
+        domains:
+          - basicauth.local
+        locations:
+          - location: /
+            proxy_pass: http://127.0.0.1:8000
+    nginx_auth:
+      basicauthsite:
+        - {name: foo, password: bar}
   roles:
     - ansible-role-nginx

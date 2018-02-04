@@ -28,9 +28,8 @@ script:
   # Tests
   - docker exec --tty ${container_id} env TERM=xterm apt-get install -y curl
   - docker exec --tty ${container_id} env TERM=xterm nginx -t
-  - docker exec --tty ${container_id} env TERM=xterm curl localhost -v
   # check sirbot config
-  - docker exec --tty ${container_id} env TERM=xterm sh -c "grep 'server_name sirbot.pyslackers.com;' /etc/nginx/sites-enabled/sirbot"
+  - docker exec --tty ${container_id} env TERM=xterm sh -c "grep 'server_name sirbot.pyslackers.local;' /etc/nginx/sites-enabled/sirbot"
   - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/sites-enabled/sirbot
   # check default nginx config
   - docker exec --tty ${container_id} env TERM=xterm cat /etc/nginx/nginx.conf
@@ -38,3 +37,10 @@ script:
   - docker exec --tty ${container_id} env TERM=xterm sh -c "grep 'return 301 https://pyslackers.com/traviscitest' /etc/nginx/sites-enabled/pyslackers"
   # check gzip flag is toggle-able
   - docker exec --tty ${container_id} env TERM=xterm sh -c "if [ -z \"$(grep 'gzip on' /etc/nginx/sites-enabled/nongzipped_site)\" ]; then true; else false; fi"
+
+  # curl websites
+  - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v -H 'Host: sirbot.pyslackers.local' | grep '502 Bad Gateway'"
+  - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v -H 'Host: pyslackers.local' | grep 'Location: https://pyslackers.com/traviscitest'"
+  - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v -H 'Host: nongzip.local' | grep '502 Bad Gateway'"
+  - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v -H 'Host: basicauth.local' | grep '401 Authorization Required'"
+  - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v -H 'Host: basicauth.local' --user foo:bar | grep '502 Bad Gateway'"

@@ -1,15 +1,27 @@
 ---
-- name: "Make {{ item.key }} available"
+
+- name: "Basic auth for {{ nginx_site.key }}"
+  htpasswd:
+    path: "/etc/nginx/auth/{{ nginx_site.key }}"
+    create: yes
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ nginx_auth[nginx_site.key] }}"
+  when:
+    - nginx_auth[nginx_site.key] is defined
+
+- name: "Make {{ nginx_site.key }} available"
   template:
-    src: "{{ item.value.template | default('etc/nginx/sites-available/site-available.j2') }}"
-    dest: "/etc/nginx/sites-available/{{ item.key }}"
+    src: "{{ nginx_site.value.template | default('etc/nginx/sites-available/site-available.j2') }}"
+    dest: "/etc/nginx/sites-available/{{ nginx_site.key }}"
   notify:
     - Reload nginx
 
-- name: "Enable {{ item.key }}"
+- name: "Enable {{ nginx_site.key }}"
   file:
-    src: "/etc/nginx/sites-available/{{ item.key }}"
-    dest: "/etc/nginx/sites-enabled/{{ item.key }}"
+    src: "/etc/nginx/sites-available/{{ nginx_site.key }}"
+    dest: "/etc/nginx/sites-enabled/{{ nginx_site.key }}"
     state: link
   notify:
     - Reload nginx
