@@ -13,10 +13,20 @@
     state: latest
   with_items:
     - nginx
-    - python-passlib
-    - python3-passlib
   notify:
     - Restart nginx
+
+- name: Install passlib python2
+  apt:
+    name: python-passlib
+    state: latest
+  when: ansible_python_version[0] == 2
+
+- name: Install passlib python3
+  apt:
+    name: python3-passlib
+    state: latest
+  when: ansible_python_version[0] == 3
 
 - name: Auth directory
   file:
