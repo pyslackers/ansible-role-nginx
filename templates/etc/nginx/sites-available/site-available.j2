@@ -103,4 +103,9 @@ server {
     }
     {% endfor %}
 
+    {% if 'errors' in nginx_site.value %}
+    {% for code, page in nginx_site.value.errors.items() %}
+    error_page {{ code }} {{ page }};
+    {% endfor %}
+    {% endif %}
 }

@@ -18,6 +18,8 @@
             static: /var/www/my_app/static/
           - location: /
             proxy_pass: http://127.0.0.1:5000
+        errors:
+          404: /var/www/my_app/static/404.html
       pyslackers:
         domains:
           - pyslackers.local
