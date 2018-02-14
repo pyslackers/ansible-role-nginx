@@ -14,13 +14,15 @@ The role takes a dictionary of variables:
     * `domains`: List of domains serving this site.
     * `template`: Jinja2 template used to generate site configuration (default to `etc/nginx/sites-available/site-available.j2`).
     * `letsencrypt`: Use HTTPS and generate letsencrypt certificate for `domains` (use `staging` for the staging letsencrypt).
+    * `gzip_enabled`: Whether or not to enable GZIP support (default: `true`)
     * `locations`: List of custom nginx locations block.
         * `location`: Location match.
         * `static`: Configure location as static and use this folder.
         * `websocket`: Configure location for websocket.
         * `proxy_pass`: Proxy destination.
         * `custom`: Custom configuration for location.
-    * `gzip_enabled`: Whether or not to enable GZIP support (default: `true`)
+    * `error`: Dict of custom error pages.
+        * `error_code`: Error page location
 
 * `nginx_auth`: Dict of sites where to enable basic-auth.
     * `site`: List of users for basic auth.
@@ -59,6 +61,8 @@ Example Playbook
             static: /var/www/my_app/static/
           - location: /
             proxy_pass: http://127.0.0.1:5000
+        errors:
+          404: /var/www/my_app/static/404.html
       pyslackers:
         domains:
           - pyslackers.com
