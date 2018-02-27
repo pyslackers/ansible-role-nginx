@@ -1,6 +1,7 @@
 ---
 
 - name: "Basic auth for {{ nginx_site.key }}"
+  no_log: True
   htpasswd:
     path: "/etc/nginx/auth/{{ nginx_site.key }}"
     create: yes
