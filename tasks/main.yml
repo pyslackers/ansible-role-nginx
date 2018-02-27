@@ -42,6 +42,8 @@
     webserver: nginx
   with_dict: "{{ nginx_sites }}"
   when: item.value.letsencrypt is defined and item.value.letsencrypt
+  loop_control:
+    label: "{{ item.value.domains | default(item.key) }}"
 
 - include_tasks: sites.yml
   with_dict: "{{ nginx_sites }}"
