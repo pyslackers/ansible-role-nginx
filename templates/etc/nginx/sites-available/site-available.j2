@@ -6,8 +6,8 @@ map $http_upgrade $connection_upgrade {
 }
 
 server {
-    listen 80;
-    listen [::]:80;
+    listen 80 {% if nginx_site.value.default | default(false) %}default_server{% endif %};
+    listen [::]:80 {% if nginx_site.value.default | default(false) %}default_server{% endif %};
     {% if nginx_site.value.domains | default(false) %}
 
     server_name {{ nginx_site.value.domains | join(' ') }};

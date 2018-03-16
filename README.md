@@ -1,9 +1,9 @@
-NGINX
-=========
+pyslackers.nginx
+================
 
 [![Build Status](https://travis-ci.org/pyslackers/ansible-role-nginx.svg?branch=master)](https://travis-ci.org/pyslackers/ansible-role-nginx)
 
-Ansible role to install and configure NGINX.
+Ansible role to install and configure [NGINX](https://www.nginx.com/).
 
 Role Variables
 --------------
@@ -11,6 +11,7 @@ Role Variables
 The role takes a dictionary of variables:
 
 * `nginx_sites`: Dict of sites.
+    * `default`: Set this site as default.
     * `domains`: List of domains serving this site.
     * `template`: Jinja2 template used to generate site configuration (default to `etc/nginx/sites-available/site-available.j2`).
     * `letsencrypt`: Use HTTPS and generate letsencrypt certificate for `domains` (use `staging` for the staging letsencrypt).
