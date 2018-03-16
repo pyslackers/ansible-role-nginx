@@ -4,6 +4,7 @@
     email: noreply@example.local
     nginx_sites:
       sirbot:
+        default: True
         domains:
           - sirbot.pyslackers.local
         locations:
