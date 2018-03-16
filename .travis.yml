@@ -44,4 +44,4 @@ script:
   - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v -H 'Host: nongzip.local' | grep '502 Bad Gateway'"
   - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v -H 'Host: basicauth.local' | grep '401 Authorization Required'"
   - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v -H 'Host: basicauth.local' --user foo:bar | grep '502 Bad Gateway'"
-  - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v"
+  - "docker exec --tty ${container_id} env TERM=xterm curl localhost -v | grep '401 Authorization Required'"
