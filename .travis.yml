@@ -5,6 +5,7 @@ env:
   - distro=debian8
   - distro=debian9
   - distro=ubuntu1604
+  - distro=ubuntu1804
 
 install:
   - export container_id=$(date +%s)
@@ -15,6 +16,7 @@ install:
   - docker pull geerlingguy/docker-$distro-ansible:latest
   - docker run --detach --volume="$(dirname "$TRAVIS_BUILD_DIR")":/etc/ansible/roles:rw --name $container_id --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro geerlingguy/docker-$distro-ansible:latest /lib/systemd/systemd
   - docker exec --tty ${container_id} env TERM=xterm apt-get update -qq
+  - docker exec --tty ${container_id} env TERM=xterm apt-get upgrade -qq
   - docker exec --tty ${container_id} env TERM=xterm apt-get install -y ufw
   - docker ps
 
