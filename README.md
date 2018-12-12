@@ -10,6 +10,8 @@ Role Variables
 
 The role takes a dictionary of variables:
 
+* `nginx_custom_configurations`: Dict of custom configuration set in `/etc/nginx/conf.d/ansible.conf`
+
 * `nginx_sites`: Dict of sites.
     * `default`: Set this site as default.
     * `domains`: List of domains serving this site.
@@ -46,6 +48,8 @@ Example Playbook
 - hosts: localhost
   vars:
     email: noreply@example.com
+    nginx_custom_configurations:
+      server_names_hash_bucket_size: 64
     nginx_sites:
       sirbot:
         domains:
@@ -55,9 +59,9 @@ Example Playbook
             websocket: true
             proxy_pass: http://127.0.0.1:5000
           - location: /custom
+            proxy_pass: http://127.0.0.1:5001
             custom: |
               proxy_set_header X-Hello-World hello;
-            proxy_pass: http://127.0.0.1:5001
           - location: /static
             static: /var/www/my_app/static/
           - location: /
@@ -68,7 +72,7 @@ Example Playbook
         domains:
           - pyslackers.com
         template: pyslackers.j2
-  nginx_auth:
+    nginx_auth:
       pyslackers:
         - {name: foo, password: bar}
   roles:
