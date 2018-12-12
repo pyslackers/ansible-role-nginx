@@ -1,0 +1,5 @@
+# {{ ansible_managed }}
+
+{% for key, value in nginx_custom_configurations.items() %}
+{{ key }} {{ value}};
+{% endfor %}
