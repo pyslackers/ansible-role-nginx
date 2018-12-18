@@ -33,6 +33,12 @@
     path: /etc/nginx/auth
     state: directory
 
+- name: Configure nginx
+  template:
+    src: etc/nginx/conf.d/ansible.conf.j2
+    dest: /etc/nginx/conf.d/ansible.conf
+  notify: Restart nginx
+
 - name: Generate certificates
   include_role:
     name: pyslackers.letsencrypt
