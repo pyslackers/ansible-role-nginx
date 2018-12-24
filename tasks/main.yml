@@ -9,10 +9,8 @@
 
 - name: Install
   apt:
-    name: "{{ item }}"
+    name: nginx
     state: latest
-  with_items:
-    - nginx
   notify:
     - Restart nginx
 
