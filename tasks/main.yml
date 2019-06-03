@@ -58,7 +58,7 @@
   file:
     dest: /etc/nginx/sites-enabled/default
     state: absent
-  when: nginx_sites
+  when: nginx_sites | bool
   notify:
     - Reload nginx
 
@@ -72,4 +72,4 @@
   ufw:
     rule: allow
     name: 'Nginx Full'
-  when: ufw_enabled
+  when: ufw_enabled | bool
