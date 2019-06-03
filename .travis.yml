@@ -27,6 +27,8 @@ script:
   - docker exec $container_id ansible-playbook /etc/ansible/roles/ansible-role-nginx/tests/test.yml | tee -a $idempotence
   - tail $idempotence | grep -q 'changed=0.*failed=0' && (printf 'Idempotence test pass') || (printf 'Idempotence test fail' && exit 1)
 
+  - docker exec $container_id env TERM=xterm journalctl -u nginx.service -n 5000 --no-pager
+
   # Tests
   - docker exec --tty ${container_id} env TERM=xterm apt-get install -y curl
   - docker exec --tty ${container_id} env TERM=xterm nginx -t
