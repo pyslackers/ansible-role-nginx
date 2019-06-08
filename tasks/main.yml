@@ -58,7 +58,7 @@
   file:
     dest: /etc/nginx/sites-enabled/default
     state: absent
-  when: nginx_sites.keys() > 0
+  when: nginx_sites | length > 0
   notify:
     - Reload nginx
 
